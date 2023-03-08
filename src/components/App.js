@@ -8,13 +8,23 @@ function App() {
   const [ areas, setAreas ] = useState([])
   const [ hosts, setHosts ] = useState([])
   const [ selectedHost, setSelectedHost ] = useState([])
+  const [ activeHosts, setActiveHosts ] = useState([])
+  const [ discomissionedHosts, setDiscomissionedHosts ] = useState([])
 
-  const showDetail = (host) => {
-    setSelectedHost(host)
-  }
-
-  const updateHosts = (updatedHost) => {
-    setSelectedHost(updatedHost)
+  function handleRadioChange(selectedHost) {
+    const { id, active } = selectedHost
+    const newActive = !active
+    console.log(newActive)
+    fetch(`http://localhost:3001/hosts/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ active: newActive})
+    })
+    .then(res => res.json())
+    .then(updatedHost => {
+      setSelectedHost(updatedHost)
     const newHosts = hosts.map(host => {
       if (host.id === updatedHost.id) {
         return updatedHost
@@ -23,6 +33,11 @@ function App() {
       }
     })
     setHosts(newHosts) 
+    })
+  }
+
+  const showDetail = (host) => {
+    setSelectedHost(host)
   }
 
   useEffect(() => {
@@ -37,10 +52,22 @@ function App() {
       .then(setAreas)  
   }, [])
 
+  useEffect(() => {
+    fetch("http://localhost:3001/hosts")
+      .then(res => res.json())
+      .then(hostsData => {
+        const activeOnes = hostsData.filter(host => host.active === true)
+        setActiveHosts(activeOnes)
+        const discomOnes = hostsData.filter(host => host.active === false)
+        setDiscomissionedHosts(discomOnes)
+       })
+  }, [hosts])
+
+
   return (
     <Segment id="app">
-      <WestworldMap areas={areas}/>
-      <Headquarters hosts={hosts} onUpdateHosts={updateHosts} showDetail={showDetail} selectedHost={selectedHost}/>
+      <WestworldMap areas={areas} activeHosts={activeHosts} handleClick={handleRadioChange}/>
+      <Headquarters hosts={discomissionedHosts} onUpdateHosts={handleRadioChange} handleClick={showDetail} selectedHost={selectedHost}/>
     </Segment>
   );
 }

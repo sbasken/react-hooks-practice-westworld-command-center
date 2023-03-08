@@ -29,19 +29,6 @@ function HostInfo({ selectedHost, onUpdateHosts, hosts }) {
     // See the Semantic docs for more info: https://react.semantic-ui.com/modules/dropdown/#usage-controlled
   }
 
-  function handleRadioChange() {
-    const newActive = !active
-    console.log(newActive)
-    fetch(`http://localhost:3001/hosts/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ active: newActive})
-    })
-    .then(res => res.json())
-    .then(updatedHost => onUpdateHosts(updatedHost))
-  }
 
   return (
     <Grid>
@@ -61,7 +48,7 @@ function HostInfo({ selectedHost, onUpdateHosts, hosts }) {
             </Card.Header>
             <Card.Meta>
               <Radio
-                onChange={handleRadioChange}
+                onChange={()=>onUpdateHosts(selectedHost)}
                 label={(active) ? "Active" : "Decomissioned"}
                 checked={(active) ? true : false}
                 slider

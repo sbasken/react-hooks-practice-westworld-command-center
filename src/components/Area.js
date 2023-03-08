@@ -1,8 +1,11 @@
 import React from "react";
 import "../stylesheets/Area.css";
+import HostList from "./HostList";
 
-function Area({area}) {
-  const { id, name, limit, auth_req } = area
+function Area({area, activeHosts, handleClick, selectedHost}) {
+  const { name } = area
+
+  const hosts = activeHosts.filter(activeHosts => activeHosts.area === name)
   return (
     <div
       className="area"
@@ -11,7 +14,7 @@ function Area({area}) {
       <h3 className="labels">
         {name.toUpperCase().replace(/_/g, "  ")}
       </h3>
-      {/* See Checkpoint 1 item 2 in the Readme for a clue as to what goes here */}
+      <HostList hosts={hosts} handleClick={handleClick} selectedHost={selectedHost}/>
     </div>
   );
 }
