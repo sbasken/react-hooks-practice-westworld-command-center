@@ -10,8 +10,7 @@ import {
 } from "semantic-ui-react";
 import "../stylesheets/HostInfo.css";
 
-function HostInfo({ selectedHost, onUpdateHosts, hosts }) {
-  console.log(hosts)
+function HostInfo({ selectedHost, onUpdateHosts, onChangeLocation }) {
   const { id, imageUrl, firstName, gender, area, active } = selectedHost
   
   const [options] = useState([
@@ -24,9 +23,7 @@ function HostInfo({ selectedHost, onUpdateHosts, hosts }) {
   ]);
 
   function handleOptionChange(e, { value }) {
-    // the 'value' attribute is given via Semantic's Dropdown component.
-    // Put a debugger or console.log in here and see what the "value" variable is when you pass in different options.
-    // See the Semantic docs for more info: https://react.semantic-ui.com/modules/dropdown/#usage-controlled
+    onChangeLocation(value, id)
   }
 
 

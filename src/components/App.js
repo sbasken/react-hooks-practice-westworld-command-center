@@ -11,10 +11,34 @@ function App() {
   const [ activeHosts, setActiveHosts ] = useState([])
   const [ discomissionedHosts, setDiscomissionedHosts ] = useState([])
 
+  const changeLocation = (newLocation, id) => {
+
+      fetch(`http://localhost:3001/hosts/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ area: newLocation})
+    })
+    .then(res => res.json())
+    .then(updatedHost => {
+      setSelectedHost(updatedHost)
+    const newHosts = hosts.map(host => {
+      if (host.id === updatedHost.id) {
+        return updatedHost
+      } else {
+        return host
+      }
+    })
+    setHosts(newHosts) 
+    })
+    
+  }
+
+
   function handleRadioChange(selectedHost) {
     const { id, active } = selectedHost
     const newActive = !active
-    console.log(newActive)
     fetch(`http://localhost:3001/hosts/${id}`, {
       method: "PATCH",
       headers: {
@@ -66,8 +90,19 @@ function App() {
 
   return (
     <Segment id="app">
-      <WestworldMap areas={areas} activeHosts={activeHosts} handleClick={handleRadioChange}/>
-      <Headquarters hosts={discomissionedHosts} onUpdateHosts={handleRadioChange} handleClick={showDetail} selectedHost={selectedHost}/>
+      <WestworldMap 
+        areas={areas} 
+        activeHosts={activeHosts} 
+        selectedHost={selectedHost}
+        handleClick={showDetail} 
+      />
+      <Headquarters 
+        hosts={discomissionedHosts} 
+        onUpdateHosts={handleRadioChange} 
+        handleClick={showDetail} 
+        selectedHost={selectedHost}
+        onChangeLocation={changeLocation}
+      />
     </Segment>
   );
 }
